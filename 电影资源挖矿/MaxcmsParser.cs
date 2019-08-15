@@ -21,6 +21,7 @@ namespace Maxcms
         {
 
             Document = doc;
+          
             if (doc["rss"] != null)
             {
                 Rss = new MaxcmsRss();
@@ -32,7 +33,7 @@ namespace Maxcms
         /// <summary>
         /// 解析类型列表
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">xml</param>
         /// <returns></returns>
         private MaxcmsRssClass ParserClass(XmlElement xml)
         {
@@ -55,7 +56,7 @@ namespace Maxcms
         /// <summary>
         /// 解析视频列表
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">xml</param>
         /// <returns></returns>
         private MaxcmsRssList ParserVideoList(XmlElement xml)
         {
@@ -80,7 +81,7 @@ namespace Maxcms
         /// <summary>
         /// 解析视频信息
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">xml</param>
         /// <returns></returns>
         private MaxcmsRssList ParserVideoInfo(XmlElement xml)
         {
@@ -97,22 +98,25 @@ namespace Maxcms
                     note = item["note"].InnerText,
                     tid = int.Parse(item["tid"].InnerText),
                     type = item["type"].InnerText,
-                    pic= item["pic"].InnerText,
+                    pic = item["pic"].InnerText,
                     lang = item["lang"].InnerText,
                     area = item["area"].InnerText,
                     year = int.Parse(item["year"].InnerText),
                     state = int.Parse(item["state"].InnerText),
                     actor = item["actor"].InnerText,
                     director = item["director"].InnerText,
-                    des= item["des"].InnerText
+                    des = item["des"].InnerText,
+                    list = ParseSerial(item)
+
                 });
+
             }
             return RssList;
         }
         /// <summary>
         /// 解析页面列表
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="xml">xml</param>
         /// <returns></returns>
         private MaxcmsRssList CreateMaxcmsRssList(XmlElement xml)
         {
@@ -125,6 +129,40 @@ namespace Maxcms
                 
 
             };
+        }
+        /// <summary>
+        /// 解析播放列表序列
+        /// </summary>
+        /// <param name="xml">xml</param>
+        /// <returns></returns>
+        public VideoPackSerial ParseSerial(XmlElement xml)
+        {
+            VideoPackSerial Serial =new VideoPackSerial();            
+            if (xml["dl"]!=null)
+            {
+                if (xml["dl"]["dd"] != null)
+                {
+                    string content = xml["dl"]["dd"].InnerText;
+                    if (!string.IsNullOrWhiteSpace(content))
+                    {
+                        string[] SerialList = content.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+                        for (int i = 0; i < SerialList.Length; i++)
+                        {
+                            string[] SElement = SerialList[i].Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (SElement.Length > 2)
+                            {
+                                Serial.Add(new VideoPack()
+                                {
+                                    Name = SElement[0].Trim(),
+                                    Url = SElement[1].Trim(),
+                                    Mode = SElement[2].Trim()
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            return Serial;
         }
 
     }

@@ -7,6 +7,8 @@ namespace Maxcms
     /// </summary>
     public class VideoPackSerial : List<VideoPack> { }
 
+   
+
 
 
 

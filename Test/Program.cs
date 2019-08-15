@@ -25,7 +25,7 @@ namespace Test
             }
             foreach (MaxcmsEntity web in weblist)
             {
-                web.ToDayVideoInfoCollect();
+                web.VideoInfoCollectByDay();
             }
             Console.ReadKey();
            
